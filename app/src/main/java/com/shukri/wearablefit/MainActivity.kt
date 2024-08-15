@@ -59,7 +59,6 @@ class MainActivity : ComponentActivity() {
 
         runHealthConnect()
     }
-
     private fun runHealthConnect() {
         lifecycleScope.launch {
             try {
