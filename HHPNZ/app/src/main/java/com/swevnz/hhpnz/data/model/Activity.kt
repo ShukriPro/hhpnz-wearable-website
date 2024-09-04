@@ -77,9 +77,9 @@ data class Exercise(
     val type: String, // Type of exercise, e.g., "running", "swimming"
     val duration: Long, // Duration of the exercise in milliseconds
     val timestamp: Long, // Time when the exercise was started, in milliseconds since epoch
-    val caloriesBurned: String, // Calories burned during the exercise
     val date: Long // Date when the record was created, in milliseconds since epoch
 )
+
 
 /**
  * Entity for Distance records in the database.

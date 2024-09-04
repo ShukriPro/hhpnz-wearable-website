@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.swevnz.hhpnz.data.HealthDataDB
 import com.swevnz.hhpnz.data.HealthRepository
+import com.swevnz.hhpnz.ui.components.HealthConnectPermissionDialog
 import com.swevnz.hhpnz.ui.screens.HealthConnectSyncScreen
 import com.swevnz.hhpnz.ui.screens.HomeScreen
 import com.swevnz.hhpnz.ui.screens.LoginScreen
@@ -89,7 +90,8 @@ class MainActivity : ComponentActivity() {
                     } else {
                         //permissionLauncher.launch(healthConnectManager.permissions.map { it.toString() }.toTypedArray()) // Requests permissions if not granted
                         setContent {
-                            HealthConnectSyncScreen()
+                            //HealthConnectSyncScreen()
+                            HealthConnectPermissionDialog()
                         }
                     }
                 }

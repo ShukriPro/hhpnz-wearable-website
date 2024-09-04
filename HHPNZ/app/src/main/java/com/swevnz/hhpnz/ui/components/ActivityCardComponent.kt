@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -41,6 +42,7 @@ fun ActivityScreen(viewModel: ActivityViewModel = viewModel()) {
     val displayedActivities = viewModel.ensureAllMetricsPresent(latestActivities)
 
     Column(modifier = Modifier.padding()) {
+
         displayedActivities.forEach { activity ->
             ActivityCard(
                 title = viewModel.formatType(activity.type),
@@ -51,7 +53,7 @@ fun ActivityScreen(viewModel: ActivityViewModel = viewModel()) {
                     "sleep" -> "hours"
                     "active calories" -> "cal"
                     "exercise" -> "min"
-                    "distance" -> "km"
+                    "distance" -> "meter"
                     "vo2max" -> "mL/kg/min"
                     "weight" -> "kg"
                     else -> ""
@@ -83,6 +85,7 @@ fun getIconForActivityType(type: String): ImageVector {
     }
 }
 
+
 @Composable
 fun ActivityCard(
     title: String,
@@ -92,6 +95,7 @@ fun ActivityCard(
     icon: ImageVector,
     onClick: () -> Unit
 ) {
+
     Card(
         Modifier
             .fillMaxWidth()
@@ -144,7 +148,17 @@ fun ActivityDetailsDialog(
     onDismiss: () -> Unit
 ) {
     val detailedActivities by viewModel.detailedActivities.collectAsState()
-
+    val emoji = when (activityType) {
+        "heart_rate" -> "❤️"
+        "steps" -> "🚶‍♂️"
+        "sleep" -> "😴"
+        "active calories" -> "🔥"
+        "exercise" -> "🏋️‍♂️"
+        "distance" -> "\uD83C\uDFC3"
+        "vo2max" -> "\uD83E\uDEC1"
+        "weight" -> "⚖️"
+        else -> ""
+    }
     LaunchedEffect(activityType) {
         viewModel.fetchDetailedActivities(activityType)
     }
@@ -153,7 +167,7 @@ fun ActivityDetailsDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "${viewModel.formatType(activityType)} Details",
+                text = "$emoji ${viewModel.formatType(activityType)} Details",
                 style = MaterialTheme.typography.titleMedium // Smaller title text
             )
         },
@@ -179,15 +193,23 @@ fun ActivityDetailsDialog(
     )
 }
 
-
 @Composable
 fun ActivityDetailItem(activity: Activity) {
     val dateFormat = SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault())
     val formattedDate = dateFormat.format(activity.date)
 
     Column {
-        Text("Value: ${activity.value}")
-        Text("Date: ${formattedDate}")
-        Text("Source: ${activity.source}")
+        when (activity.type) {
+            "heart_rate" -> Text("Value: ${activity.value} bpm")
+            "steps" -> Text("Value: ${activity.value} steps")
+            "sleep" -> Text("Value: ${activity.value} hours")
+            "active calories" -> Text("Value: ${activity.value} cal")
+            "exercise" -> Text("Duration: ${activity.value} min")
+            "distance" -> Text("Value: ${activity.value} meters")
+            "vo2max" -> Text("Value: ${activity.value} mL/kg/min")
+            "weight" -> Text("Value: ${activity.value} kg")
+            else -> Text("Value: ${activity.value}")
+        }
+        Text("Date: $formattedDate")
     }
 }

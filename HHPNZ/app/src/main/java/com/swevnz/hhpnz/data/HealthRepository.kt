@@ -155,16 +155,15 @@ class HealthRepository(
 
         // Sync exercise
         val exerciseRecords = healthConnectManager.readData(ExerciseSessionRecord::class, timeRange)
-        exerciseRecords.getOrNull()?.forEach { record ->
+        exerciseRecords?.getOrNull()?.forEach { record ->
             val exercise = Exercise(
-                id = record.metadata.id,
-                type = record.exerciseType.toString(),
-                timestamp = record.startTime.toEpochMilli(),
-                duration = ChronoUnit.MILLIS.between(record.startTime, record.endTime),
-                caloriesBurned = record.metadata.dataOrigin.packageName, // Assuming this holds calories burned
-                date = Instant.now().toEpochMilli() // Current date in milliseconds
+                id = record.metadata.id, // Unique identifier for the record
+                type = record.exerciseType.toString(), // Type of exercise
+                timestamp = record.startTime.toEpochMilli(), // Start time in milliseconds
+                duration = ChronoUnit.MILLIS.between(record.startTime, record.endTime), // Duration in milliseconds
+                date = record.startTime.toEpochMilli() // Using start time as the date
             )
-            exerciseDao.insert(exercise)
+            exerciseDao.insert(exercise) // Insert the record into the database
         }
 
         // Sync distance

@@ -79,9 +79,23 @@ class HealthConnectManager(private val context: Context){
         Log.d("HealthConnect", "Sleep: ${readSleepData(timeRange)}")
         Log.d("HealthConnect", "Active Calories Burned: ${readActiveCaloriesBurned(timeRange)}")
         Log.d("HealthConnect", "Exercise: ${readExercise(timeRange)}")
+
         Log.d("HealthConnect", "Distance: ${readDistance(timeRange)}")
         Log.d("HealthConnect", "VO2 Max: ${readVo2Max(timeRange)}")
         Log.d("HealthConnect", "Weight: ${readWeightData(timeRange)}")
+
+        //Excersice:
+        // Reading exercise data
+        val exerciseRecords = readExercise(timeRange).getOrNull()
+
+        // Log structured exercise data
+        exerciseRecords?.forEach { record ->
+            val exerciseType = record.exerciseType.toString()
+            val startTime = record.startTime
+            val endTime = record.endTime
+            val duration = ChronoUnit.MILLIS.between(startTime, endTime)
+            Log.d("HealthConnect", "Exercise Type: $exerciseType, Start Time: $startTime, End Time: $endTime, Duration (ms): $duration")
+        }
     }
 
     // Function to handle permission setup
