@@ -56,7 +56,7 @@ fun HealthConnectSyncScreen() {
         coroutineScope.launch {
             if (granted.containsAll(healthConnectManager.permissions)) {
                 healthRepository.syncHealthData()
-                activity?.setContent { LoginScreen() }
+                activity?.setContent { AppNavigation() }
             }
         }
     }

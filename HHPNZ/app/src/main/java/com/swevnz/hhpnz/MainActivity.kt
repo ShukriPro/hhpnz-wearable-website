@@ -1,6 +1,5 @@
 package com.swevnz.hhpnz
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -13,10 +12,10 @@ import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.swevnz.hhpnz.data.HealthDataDB
 import com.swevnz.hhpnz.data.HealthRepository
-import com.swevnz.hhpnz.ui.components.HealthConnectPermissionDialog
-import com.swevnz.hhpnz.ui.screens.HealthConnectSyncScreen
+import com.swevnz.hhpnz.ui.dialog.HealthConnectInstallDialog
+import com.swevnz.hhpnz.ui.dialog.HealthConnectPermissionDialog
+import com.swevnz.hhpnz.ui.screens.AppNavigation
 import com.swevnz.hhpnz.ui.screens.HomeScreen
-import com.swevnz.hhpnz.ui.screens.LoginScreen
 import com.swevnz.hhpnz.ui.theme.HHPNZTheme
 import kotlinx.coroutines.launch
 
@@ -39,7 +38,7 @@ class MainActivity : ComponentActivity() {
             // User is signed in, display HomeScreen
             setContent { HHPNZTheme { HomeScreen() } }
         } else {
-            setContent { LoginScreen()}
+            setContent {  HHPNZTheme { AppNavigation() }}
         }
 
     }
@@ -84,19 +83,20 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             when (healthConnectChecker.checkHealthConnectAvailability()) {
                 HealthConnectStatus.AVAILABLE -> {
-                    if (healthConnectManager.hasAnyPermission()) { // If permissions are already granted
-                        healthConnectManager.logAllHealthData() // Logs all health data
-                        Toast.makeText(this@MainActivity, "Health Data Logged", Toast.LENGTH_SHORT).show()
+                    if (healthConnectManager.hasAnyPermission()) {
                     } else {
-                        //permissionLauncher.launch(healthConnectManager.permissions.map { it.toString() }.toTypedArray()) // Requests permissions if not granted
                         setContent {
-                            //HealthConnectSyncScreen()
                             HealthConnectPermissionDialog()
                         }
                     }
                 }
                 HealthConnectStatus.INSTALLED -> Toast.makeText(this@MainActivity, "Health Connect app is installed but not available through the SDK", Toast.LENGTH_SHORT).show()
-                HealthConnectStatus.INSTALLABLE -> Toast.makeText(this@MainActivity, "Health Connect can be installed", Toast.LENGTH_SHORT).show()
+                HealthConnectStatus.INSTALLABLE -> {
+                    setContent {
+                        HealthConnectInstallDialog() // Display dialog to install Health Connect
+                    }
+                }
+
                 HealthConnectStatus.UNAVAILABLE -> Toast.makeText(this@MainActivity, "Health Connect is not available on this device", Toast.LENGTH_SHORT).show()
             }
         }
